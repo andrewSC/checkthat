@@ -18,8 +18,8 @@ def gather_pkgbuild_paths(root_pkgs_dir):
 
 def namcap_check_pkgbuild(pkgbuild_path):
     abs_pkgbuild_path = '/'.join([pkgbuild_path, 'PKGBUILD'])
-    pkgbuild_path
-    pass
+    subproc_result = subprocess.run(['python', '/usr/lib/python3.6/site-packages/namcap.py', '-i', abs_pkgbuild_path], stdout=subprocess.PIPE)
+    return subproc_result.stdout.decode('UTF-8')
 
 
 def makepkg(pkgbuild_path):
@@ -36,4 +36,7 @@ def email_results():
     pass
 
 
-print(gather_pkgbuild_paths(packages_dir))
+if __name__ == '__main__':
+    paths = gather_pkgbuild_paths(packages_dir)
+    for path in paths:
+        print(namcap_check_pkgbuild(path))
