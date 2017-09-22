@@ -136,7 +136,7 @@ def format_output(msgs, build_time):
             output.append(fail_msg_header)
 
             for line in msgs[path]['makepkg_fail']['errors']:
-                output.append(line)
+                output.append(line + '\n')
 
             output.append(('x' * fail_msg_header_len) + '\n')
 
