@@ -97,7 +97,7 @@ def email_results(message):
     server = smtplib.SMTP('localhost')
     now = datetime.datetime.now()
     subject = f"Arrakis AUR build results on {now.strftime('%Y-%m-%d %H:%M:%S')}"
-    message = f"From: duncan@planet.arrakis\r\nTo: andrew@crerar.io\r\nSubject: {subject} \r\n\r\n {message}"
+    message = f"From: duncan@planet.arrakis\r\nTo: andrew@crerar.io\r\nSubject: {subject} \r\n\r\n{message}"
 
     email = {
         'from': 'duncan@planet.arrakis',
@@ -133,7 +133,7 @@ def format_output(msgs, build_time):
         if 'makepkg_fail' in msgs[path]:
             fail_msg_header = f"\nxxxxxxxxxxxxxxx [{msgs[path]['makepkg_fail']['path']}] xxxxxxxxxxxxxxx"
             fail_msg_header_len = len(fail_msg_header)
-            output.append(fail_msg_header)
+            output.append(fail_msg_header + '\n')
 
             for line in msgs[path]['makepkg_fail']['errors']:
                 output.append(line + '\n')
