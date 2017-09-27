@@ -5,8 +5,9 @@ import subprocess
 import smtplib
 import time
 
-from exceptions import BuildError
+from models import BuildFailure
 from builders import PackageBuilder
+from views import CliView
 
 
 def gather_pkgbuild_paths(root_pkgs_dir):
@@ -19,43 +20,6 @@ def gather_pkgbuild_paths(root_pkgs_dir):
     # return pkgbuild_paths
 
     return ['/home/andrew/Dev/aur/firefox-developer', '/home/andrew/Dev/aur/gtk4-git']
-
-
-def namcap_check_pkgbuild(pkgbuild_path):
-    cmd = [
-        'python',
-        '/usr/lib/python3.6/site-packages/namcap.py',
-        '-i',
-        '/'.join([pkgbuild_path, 'PKGBUILD'])
-    ]
-    subproc_result = subprocess.run(cmd, stdout=subprocess.PIPE)
-    decoded_stdout = subproc_result.stdout.decode('UTF-8')
-
-    if decoded_stdout:
-        # NOTE: If there's any output from the linter, strip newlines from the output
-        # then return a list where each item is a single line of output from namcap
-        return decoded_stdout.rstrip('\n').rsplit('\n')
-
-
-def makepkg(pkgbuild_path):
-    cmd = [
-        'makepkg',
-        '-cCmf'
-    ]
-    original_dir = os.getcwd()
-    os.chdir(pkgbuild_path)
-    subproc_result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    decoded_stdout = subproc_result.stdout.decode('UTF-8')
-
-    os.chdir(original_dir)
-
-    if subproc_result.returncode != 0:
-        # NOTE: If there's any output from the linter, strip newlines from the output
-        # then return a list where each item is a single line of output from namcap
-        raise BuildError(f"Failed building [{pkgbuild_path}]", decoded_stdout.rstrip('\n').rsplit('\n'))
-
-    pkgnames = generate_built_package_name(pkgbuild_path)
-    return f"Successfully built [{pkgnames}]"
 
 
 def generate_built_package_name(pkgbuild_path):
@@ -78,22 +42,6 @@ def generate_built_package_name(pkgbuild_path):
                     return filename
 
     os.chdir(original_dir)
-
-
-def namcap_check_pkg(pkg_path):
-    cmd = [
-        'python',
-        '/usr/lib/python3.6/site-packages/namcap.py',
-        '-i',
-        '/'.join([pkg_path, generate_built_package_name(pkg_path)])
-    ]
-    subproc_result = subprocess.run(cmd, stdout=subprocess.PIPE)
-    decoded_stdout = subproc_result.stdout.decode('UTF-8')
-
-    if decoded_stdout:
-        # NOTE: If there's any output from the linter, strip newlines from the output
-        # then return a list where each item is a single line of output from namcap
-        return decoded_stdout.rstrip('\n').rsplit('\n')
 
 
 def email_results(message):
@@ -183,35 +131,47 @@ if __name__ == '__main__':
 
     msgs = {}
     builder = PackageBuilder()
+    builds = []
+    view = CliView()
+
     for path in abs_paths:
         msgs[path] = {}
 
-        print(builder.build(path))
-        print(builder.analyze_pkg(path))
-        print(builder.analyze_pkgbuild(path))
-        """
-        namcap_pkgbuild_check_msgs = namcap_check_pkgbuild(path)
-        if namcap_pkgbuild_check_msgs:
-            msgs[path]['namcap_pkgbuild'] = []
+        build = builder.build(path)
+        build.namcap_pkgbuild_analysis = builder.analyze_pkgbuild(path)
 
-            for output_line in namcap_pkgbuild_check_msgs:
-                msgs[path]['namcap_pkgbuild'].append(f"[{path}]: {output_line}")
+        if type(build) is not BuildFailure:
+            # NOTE: We should only try to analyze the package if the build
+            # was actually successful
+            build.namcap_pkg_analysis = builder.analyze_pkg(path)
 
-        try:
-            makepkg_result = makepkg(path)
-            msgs[path]['makepkg'] = makepkg_result
+        builds.append(build)
 
-            # NOTE: Namcap should only lint the pkg if it was a successful build
-            namcap_pkg_check_msgs = namcap_check_pkg(path)
-            if namcap_pkg_check_msgs:
-                msgs[path]['namcap_pkg'] = {'pkgname': generate_built_package_name(path), 'output': []}
-                for output_line in namcap_pkg_check_msgs:
-                    msgs[path]['namcap_pkg']['output'].append(output_line)
+    view.generate_output(builds)
 
-        except BuildError as e:
-            msgs[path]['makepkg'] = str(e)
-            msgs[path]['makepkg_fail'] = {'path': path, 'errors': e.errors}
-
-    end_time = time.time()
-    email_results(format_output(msgs, (end_time - start_time)))
     """
+    namcap_pkgbuild_check_msgs = namcap_check_pkgbuild(path)
+    if namcap_pkgbuild_check_msgs:
+        msgs[path]['namcap_pkgbuild'] = []
+
+        for output_line in namcap_pkgbuild_check_msgs:
+            msgs[path]['namcap_pkgbuild'].append(f"[{path}]: {output_line}")
+
+    try:
+        makepkg_result = makepkg(path)
+        msgs[path]['makepkg'] = makepkg_result
+
+        # NOTE: Namcap should only lint the pkg if it was a successful build
+        namcap_pkg_check_msgs = namcap_check_pkg(path)
+        if namcap_pkg_check_msgs:
+            msgs[path]['namcap_pkg'] = {'pkgname': generate_built_package_name(path), 'output': []}
+            for output_line in namcap_pkg_check_msgs:
+                msgs[path]['namcap_pkg']['output'].append(output_line)
+
+    except BuildError as e:
+        msgs[path]['makepkg'] = str(e)
+        msgs[path]['makepkg_fail'] = {'path': path, 'errors': e.errors}
+
+end_time = time.time()
+email_results(format_output(msgs, (end_time - start_time)))
+"""
