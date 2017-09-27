@@ -187,6 +187,8 @@ if __name__ == '__main__':
         msgs[path] = {}
 
         print(builder.build(path))
+        print(builder.analyze_pkg(path))
+        print(builder.analyze_pkgbuild(path))
         """
         namcap_pkgbuild_check_msgs = namcap_check_pkgbuild(path)
         if namcap_pkgbuild_check_msgs:

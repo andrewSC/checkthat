@@ -7,14 +7,14 @@ class Build:
 
 
 class BuildSuccess(Build):
-    def __init__(self, **kwargs):
-        super(BuildSuccess, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(BuildSuccess, self).__init__(*args, **kwargs)
 
 
 class BuildFailure(Build):
-    def __init__(self, error_msgs=[], **kwargs):
+    def __init__(self, error_msgs=[], *args, **kwargs):
         self.error_msgs = error_msgs
-        super(BuildFailure, super).__init__(**kwargs)
+        super(BuildFailure, super).__init__(*args, **kwargs)
 
 
 class Namcap:
@@ -23,10 +23,10 @@ class Namcap:
 
 
 class NamcapPkgAnalysis:
-    def __init__(self, **kwargs):
-        super(NamcapPkgAnalysis, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(NamcapPkgAnalysis, self).__init__(*args, **kwargs)
 
 
 class NamcapPkgBuildAnalysis:
-    def __init__(self, **kwargs):
-        super(NamcapPkgBuildAnalysis, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(NamcapPkgBuildAnalysis, self).__init__(*args, **kwargs)

@@ -32,7 +32,8 @@ class PackageBuilder:
                                 total_build_time=total_time)
 
         pkg_name = self.generate_built_package_name(pkgbuild_path)
-        return BuildSuccess(f"Successfully built [{pkg_name}]", total_time)
+        return BuildSuccess(status_msg=f"Successfully built [{pkg_name}]",
+                            total_build_time=total_time)
 
     def analyze_pkg(self, pkg_path):
         cmd = [
@@ -62,7 +63,7 @@ class PackageBuilder:
         # then return a list where each item is a single line of output from namcap
         return NamcapPkgBuildAnalysis(cmd_output.rstrip('\n').rsplit('\n'))
 
-    def generate_built_package_name(pkgbuild_path):
+    def generate_built_package_name(self, pkgbuild_path):
         name = None
         cmd = [
             'makepkg',
