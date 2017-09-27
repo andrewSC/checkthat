@@ -6,6 +6,7 @@ import smtplib
 import time
 
 from exceptions import BuildError
+from builders import PackageBuilder
 
 
 def gather_pkgbuild_paths(root_pkgs_dir):
@@ -15,7 +16,9 @@ def gather_pkgbuild_paths(root_pkgs_dir):
         if 'PKGBUILD' in files:
             pkgbuild_paths.append(root)
 
-    return pkgbuild_paths
+    # return pkgbuild_paths
+
+    return ['/home/andrew/Dev/aur/firefox-developer', '/home/andrew/Dev/aur/gtk4-git']
 
 
 def namcap_check_pkgbuild(pkgbuild_path):
@@ -45,7 +48,7 @@ def makepkg(pkgbuild_path):
     decoded_stdout = subproc_result.stdout.decode('UTF-8')
 
     os.chdir(original_dir)
-    
+
     if subproc_result.returncode != 0:
         # NOTE: If there's any output from the linter, strip newlines from the output
         # then return a list where each item is a single line of output from namcap
@@ -110,7 +113,6 @@ def email_results(message):
     server.quit()
 
 
-# def format_output(namcap_pkgbuild_msgs, namcap_pkg_msgs, makepkg_mgs, makepkg_fail_msgs, total_time):
 def format_output(msgs, build_time):
     output = []
     build_header = ('-' * 30) + ' Build Results ' + ('-' * 30)
@@ -178,11 +180,14 @@ if __name__ == '__main__':
 
     start_time = time.time()
     abs_paths = gather_pkgbuild_paths(sys.argv[1])  # ABS path to where all the folders for packages are located
-    
+
     msgs = {}
+    builder = PackageBuilder()
     for path in abs_paths:
         msgs[path] = {}
 
+        print(builder.build(path))
+        """
         namcap_pkgbuild_check_msgs = namcap_check_pkgbuild(path)
         if namcap_pkgbuild_check_msgs:
             msgs[path]['namcap_pkgbuild'] = []
@@ -205,6 +210,6 @@ if __name__ == '__main__':
             msgs[path]['makepkg'] = str(e)
             msgs[path]['makepkg_fail'] = {'path': path, 'errors': e.errors}
 
-
     end_time = time.time()
     email_results(format_output(msgs, (end_time - start_time)))
+    """
