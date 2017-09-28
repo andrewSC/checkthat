@@ -6,6 +6,7 @@ import sys
 from models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis
 
 
+# TODO: Refactor subprocess run logic into generic method
 class PackageBuilder:
     def build(self, pkgbuild_path):
         cmd = [
@@ -38,7 +39,7 @@ class PackageBuilder:
     def analyze_pkg(self, pkg_path):
         cmd = [
             sys.executable,
-            '/usr/lib/python3.6/site-packages/namcap.py',
+            '/usr/lib/python3.6/site-packages/namcap.py',  # TODO: Remove hardcoded path
             '-i',
             '/'.join([pkg_path, self.generate_built_package_name(pkg_path)])
         ]
@@ -52,7 +53,7 @@ class PackageBuilder:
     def analyze_pkgbuild(self, pkgbuild_path):
         cmd = [
             sys.executable,
-            '/usr/lib/python3.6/site-packages/namcap.py',
+            '/usr/lib/python3.6/site-packages/namcap.py',  # TODO: Remove hardcoded path
             '-i',
             '/'.join([pkgbuild_path, 'PKGBUILD'])
         ]

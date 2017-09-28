@@ -1,4 +1,3 @@
-
 class Build:
     def __init__(self, status_msg='', total_build_time=0, namcap_pkg_analysis=None, namcap_pkgbuild_analysis=None):
         self.status_msg = status_msg
