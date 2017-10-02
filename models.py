@@ -30,3 +30,6 @@ class NamcapPkgAnalysis(Namcap):
 class NamcapPkgBuildAnalysis(Namcap):
     def __init__(self, *args, **kwargs):
         super(NamcapPkgBuildAnalysis, self).__init__(*args, **kwargs)
+
+class PkgbuildFetchFailure:
+    pass

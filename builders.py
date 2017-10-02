@@ -3,12 +3,15 @@ import os
 import time
 import sys
 
-from models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis
+from models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis, PkgbuildFetchFailure
 
 
 # TODO: Refactor subprocess run logic into generic method
 class PackageBuilder:
-    def build(self, pkgbuild_path):
+    def build(self, pkgbuild_path, fetch_latest_pkgbuild=True):
+        if fetch_latest_pkgbuild:
+            self.__fetch_latest_pkgbuild(pkgbuild_path)
+
         cmd = [
             'makepkg',
             '-cCmf'
@@ -32,7 +35,7 @@ class PackageBuilder:
                                 status_msg=f"Failed building [{pkgbuild_path}]",
                                 total_build_time=total_time)
 
-        pkg_name = self.generate_built_package_name(pkgbuild_path)
+        pkg_name = self.__generate_built_package_name(pkgbuild_path)
         return BuildSuccess(status_msg=f"Successfully built [{pkg_name}]",
                             total_build_time=total_time)
 
@@ -41,7 +44,7 @@ class PackageBuilder:
             sys.executable,
             '/usr/lib/python3.6/site-packages/namcap.py',  # TODO: Remove hardcoded path
             '-i',
-            '/'.join([pkg_path, self.generate_built_package_name(pkg_path)])
+            '/'.join([pkg_path, self.__generate_built_package_name(pkg_path)])
         ]
         proc_result = subprocess.run(cmd, stdout=subprocess.PIPE)
         cmd_output = proc_result.stdout.decode('UTF-8')
@@ -64,7 +67,19 @@ class PackageBuilder:
         # then return a list where each item is a single line of output from namcap
         return NamcapPkgBuildAnalysis(cmd_output.rstrip('\n').rsplit('\n'))
 
-    def generate_built_package_name(self, pkgbuild_path):
+    def __fetch_latest_pkgbuild(self, pkgbuild_path):
+        cmd_fetch = ['git', 'fetch', '-all']
+        cmd_reset = ['git', 'reset', '--hard', 'origin/master']
+        orig_dir = os.getcwd()
+        os.chdir(pkgbuild_path)
+
+        subprocess.run(cmd_fetch, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        subprocess.run(cmd_reset, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        # TODO: Log outputs of git subprocesses to output
+
+        os.chdir(orig_dir)
+
+    def __generate_built_package_name(self, pkgbuild_path):
         name = None
         cmd = [
             'makepkg',

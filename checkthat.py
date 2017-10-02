@@ -48,7 +48,7 @@ if __name__ == '__main__':
     builds = []
 
     for path in abs_paths:
-        build = builder.build(path)
+        build = builder.build(path, True)
         build.namcap_pkgbuild_analysis = builder.analyze_pkgbuild(path)
 
         if type(build) is not BuildFailure:
