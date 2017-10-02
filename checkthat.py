@@ -48,13 +48,15 @@ if __name__ == '__main__':
     builds = []
 
     for path in abs_paths:
-        build = builder.build(path, True)
+        build = builder.build(path,
+                              fetch_latest_pkgbuild=True)
         build.namcap_pkgbuild_analysis = builder.analyze_pkgbuild(path)
 
         if type(build) is not BuildFailure:
             # NOTE: We should only try to analyze the package if the build
             # was actually successful
             build.namcap_pkg_analysis = builder.analyze_pkg(path)
+            builder.cleanup(build)  # TODO: Make this better
 
         builds.append(build)
 

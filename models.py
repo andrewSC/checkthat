@@ -7,7 +7,9 @@ class Build:
 
 
 class BuildSuccess(Build):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, pkg_name=None, pkg_path=None, *args, **kwargs):
+        self.pkg_name = pkg_name
+        self.pkg_path = pkg_path
         super(BuildSuccess, self).__init__(*args, **kwargs)
 
 
