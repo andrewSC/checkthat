@@ -8,7 +8,7 @@ from models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuild
 
 # TODO: Refactor subprocess run logic into generic method
 class PackageBuilder:
-    def build(self, pkgbuild_path, fetch_latest_pkgbuild=True):
+    def build(self, pkgbuild_path, fetch_latest_pkgbuild=False):
         if fetch_latest_pkgbuild:
             self.__fetch_latest_pkgbuild(pkgbuild_path)
 
@@ -36,8 +36,26 @@ class PackageBuilder:
                                 total_build_time=total_time)
 
         pkg_name = self.__generate_built_package_name(pkgbuild_path)
+
         return BuildSuccess(status_msg=f"Successfully built [{pkg_name}]",
-                            total_build_time=total_time)
+                            total_build_time=total_time,
+                            pkg_name=pkg_name,
+                            pkg_path=pkgbuild_path)  # TODO: Make this better
+
+    def cleanup(self, success_build):
+        cmd = [
+            'rm',
+            '/'.join([success_build.pkg_path, success_build.pkg_name])
+        ]
+
+        orig_dir = os.getcwd()
+        os.chdir(success_build.pkg_path)
+
+        subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        # TODO: Log outputs of git subprocesses to output
+
+        os.chdir(orig_dir)
 
     def analyze_pkg(self, pkg_path):
         cmd = [
