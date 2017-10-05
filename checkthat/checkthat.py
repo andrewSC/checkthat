@@ -2,6 +2,7 @@ import datetime
 import os
 import sys
 import smtplib
+import argparse
 
 from .models import BuildFailure
 from .builders import PackageBuilder
@@ -36,12 +37,11 @@ def email_results(message):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print('Error: Missing path to directory containing AUR packages.')
-        print('Usage: python checkthat.py <dir>')
-        quit()
+    parser = argparse.ArgumentParser(description='An automated AUR package builder and analyzer')
+    parser.add_argument('path', help='Path to where packages are located')
+    args = parser.parse_args()
 
-    abs_paths = gather_pkgbuild_paths(sys.argv[1])  # ABS path to where all the folders for packages are located
+    abs_paths = gather_pkgbuild_paths(args.path)  # ABS path to where all the folders for packages are located
 
     builder = PackageBuilder()
     view = EmailView()
