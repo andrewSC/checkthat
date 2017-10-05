@@ -1,6 +1,6 @@
-checkthat
+Checkthat
 =========
-An Arch Linux AUR package linter, builder, and tester written in Python.
+A automated Arch Linux AUR package builder and analyzer written in Python.
 
 
 System Requirements
@@ -12,7 +12,11 @@ System Requirements
 .. _base-devel: https://www.archlinux.org/groups/x86_64/base-devel/
 
 
-Setup
+Installation
 -----
-1. Clone the repo and install the Python requirements located in ``requirements.txt``
-2. 
+Clone the repo and run ``pip install .``
+
+
+Usage
+------
+``checkthat <path_to_folder>``
