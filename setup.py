@@ -9,4 +9,9 @@ setup(name='Checkthat',
       author_email='andrew@crerar.io',
       url='https://github.com/andrewSC/checkthat',
       license='MIT',
-      packages=['checkthat'])
+      packages=['checkthat'],
+      entry_points={
+          'console_scripts': [
+              'checkthat = checkthat.checkthat:main'
+          ]
+      })

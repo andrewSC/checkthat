@@ -1,4 +1,4 @@
-from models import BuildFailure
+from .models import BuildFailure
 
 
 # TODO: Make this class and its methods better in general.

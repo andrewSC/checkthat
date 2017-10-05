@@ -3,7 +3,7 @@ import os
 import time
 import sys
 
-from models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis, PkgbuildFetchFailure
+from .models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis, PkgbuildFetchFailure
 
 
 # TODO: Refactor subprocess run logic into generic method

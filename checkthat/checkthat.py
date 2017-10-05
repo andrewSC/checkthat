@@ -3,9 +3,9 @@ import os
 import sys
 import smtplib
 
-from models import BuildFailure
-from builders import PackageBuilder
-from views import EmailView
+from .models import BuildFailure
+from .builders import PackageBuilder
+from .views import EmailView
 
 
 def gather_pkgbuild_paths(root_pkgs_dir):
@@ -35,7 +35,7 @@ def email_results(message):
     server.quit()
 
 
-if __name__ == '__main__':
+def main():
     if len(sys.argv) < 2:
         print('Error: Missing path to directory containing AUR packages.')
         print('Usage: python checkthat.py <dir>')
