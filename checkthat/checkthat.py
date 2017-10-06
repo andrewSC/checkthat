@@ -1,7 +1,8 @@
+import argparse
 import datetime
 import os
 import smtplib
-import argparse
+import toml
 
 from .models import BuildFailure
 from .builders import PackageBuilder
@@ -33,6 +34,11 @@ def email_results(message):
 
     server.sendmail(email['from'], email['to'], email['message'])
     server.quit()
+
+
+def read_config(conf_path):
+    with open(conf_path, 'r') as conf_file:
+        return toml.load(conf_file)
 
 
 def main():
