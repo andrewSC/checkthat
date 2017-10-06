@@ -4,13 +4,13 @@
 fetch_latest = true
 
 
+# Whether or not the PKGBUILD itself should be analyzed.
+analyze_pkgbuild = true
+
+
 # Whether or not to analyze the built package upon success. If the package
 # doesn't built successfully then this setting doesn't matter.
 analyze_package = true
-
-
-# Whether or not the PKGBUILD itself should be analyzed.
-analyze_pkgbuild = true
 
 
 # Whether or not the tool should remove the built package after any/all
@@ -23,7 +23,7 @@ cleanup = true
 output = "email"  # Options are: "email" or "cli"
 
 [email]
-subject = "Arrakis AUR build results on {now.strftime('%Y-%m-%d %H:%M:%S')}"
+subject = "Arrakis AUR build results"
 
   [email.addresses]
     from = "duncan@planet.arrakis"
