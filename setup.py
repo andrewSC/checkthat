@@ -10,6 +10,7 @@ setup(name='Checkthat',
       url='https://github.com/andrewSC/checkthat',
       license='MIT',
       packages=['checkthat'],
+      install_requires=['toml'],
       entry_points={
           'console_scripts': [
               'checkthat = checkthat.checkthat:main'

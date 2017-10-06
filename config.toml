@@ -1,0 +1,30 @@
+# Whether or not the tool should perform a git fetch from the remote before
+# building. NOTE: If this is enabled then any changes within the package
+# folder will be erased.
+fetch_latest = true
+
+
+# Whether or not the PKGBUILD itself should be analyzed.
+analyze_pkgbuild = true
+
+
+# Whether or not to analyze the built package upon success. If the package
+# doesn't built successfully then this setting doesn't matter.
+analyze_package = true
+
+
+# Whether or not the tool should remove the built package after any/all
+# analysis is complete.
+cleanup = true
+
+
+# How the tool should output the build results. NOTE: If the configured
+# output is "email" then the email section below must be completed.
+output = "email"  # Options are: "email" or "cli"
+
+[email]
+subject = "Arrakis AUR build results"
+
+  [email.addresses]
+    from = "duncan@planet.arrakis"
+    to = "andrew@crerar.io"

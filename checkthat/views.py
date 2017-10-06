@@ -40,6 +40,8 @@ class CliView(View):
     def generate_output(self, builds):
         total_build_time = 0
         has_failures = False
+        has_pkg_analysis = False  # TODO: Make this better
+        has_pkgbuild_analysis = False  # TODO: Make this better
 
         print(self.get_build_header())
 
@@ -49,6 +51,12 @@ class CliView(View):
 
             if type(build) is BuildFailure:
                 has_failures = True
+
+            if build.namcap_pkgbuild_analysis:
+                has_pkgbuild_analysis = True
+
+            if build.namcap_pkg_analysis:
+                has_pkg_analysis = True
 
         mins, secs = divmod(total_build_time, 60)
         print(f"Total build time: {mins}m {secs}s")
@@ -69,23 +77,25 @@ class CliView(View):
 
             print(self.get_failure_footer())
 
-        print(self.get_namcap_pkgbuild_header())
-        for build in builds:
-            msgs = build.namcap_pkgbuild_analysis.msgs
+        if has_pkgbuild_analysis:
+            print(self.get_namcap_pkgbuild_header())
+            for build in builds:
+                msgs = build.namcap_pkgbuild_analysis.msgs
 
-            # NOTE: We need to check the list to make sure it has actual
-            # content and not just the empty string
-            if any([item for item in msgs if item != '']):
-                for msg in msgs:
-                    print(msg)
-        print(self.get_namcap_pkgbuild_footer())
+                # NOTE: We need to check the list to make sure it has actual
+                # content and not just the empty string
+                if any([item for item in msgs if item != '']):
+                    for msg in msgs:
+                        print(msg)
+            print(self.get_namcap_pkgbuild_footer())
 
-        print(self.get_namcap_pkg_header())
-        for build in builds:
-            if type(build) is not BuildFailure:
-                for msg in build.namcap_pkg_analysis.msgs:
-                    print(msg)
-        print(self.get_namcap_pkg_footer())
+        if has_pkg_analysis:
+            print(self.get_namcap_pkg_header())
+            for build in builds:
+                if type(build) is not BuildFailure:
+                    for msg in build.namcap_pkg_analysis.msgs:
+                        print(msg)
+            print(self.get_namcap_pkg_footer())
 
 
 # TODO: Refactor EmailView and CliView to remove duplicate code!!
@@ -97,6 +107,8 @@ class EmailView(View):
     def generate_output(self, builds):
         total_build_time = 0
         has_failures = False
+        has_pkg_analysis = False  # TODO: Make this better
+        has_pkgbuild_analysis = False  # TODO: Make this better
         output = []
 
         output.append(self.get_build_header() + '\n')
@@ -107,6 +119,12 @@ class EmailView(View):
 
             if type(build) is BuildFailure:
                 has_failures = True
+
+            if build.namcap_pkgbuild_analysis:
+                has_pkgbuild_analysis = True
+
+            if build.namcap_pkg_analysis:
+                has_pkg_analysis = True
 
         mins, secs = divmod(total_build_time, 60)
         output.append(f"\nTotal build time: {mins}m {secs}s\n")
@@ -127,24 +145,26 @@ class EmailView(View):
 
             output.append(self.get_failure_footer() + '\n\n')
 
-        output.append(self.get_namcap_pkgbuild_header() + '\n')
-        for build in builds:
-            msgs = build.namcap_pkgbuild_analysis.msgs
+        if has_pkgbuild_analysis:
+            output.append(self.get_namcap_pkgbuild_header() + '\n')
+            for build in builds:
+                msgs = build.namcap_pkgbuild_analysis.msgs
 
-            # NOTE: We need to check the list to make sure it has actual
-            # content and not just the empty string
-            if any([item for item in msgs if item != '']):
-                for msg in msgs:
-                    output.append(msg + '\n')
+                # NOTE: We need to check the list to make sure it has actual
+                # content and not just the empty string
+                if any([item for item in msgs if item != '']):
+                    for msg in msgs:
+                        output.append(msg + '\n')
 
-        output.append(self.get_namcap_pkgbuild_footer() + '\n\n')
+            output.append(self.get_namcap_pkgbuild_footer() + '\n\n')
 
-        output.append(self.get_namcap_pkg_header() + '\n')
-        for build in builds:
-            if type(build) is not BuildFailure:
-                for msg in build.namcap_pkg_analysis.msgs:
-                    output.append(msg + '\n')
+        if has_pkg_analysis:
+            output.append(self.get_namcap_pkg_header() + '\n')
+            for build in builds:
+                if type(build) is not BuildFailure:
+                    for msg in build.namcap_pkg_analysis.msgs:
+                        output.append(msg + '\n')
 
-        output.append(self.get_namcap_pkg_footer() + '\n')
+            output.append(self.get_namcap_pkg_footer() + '\n')
 
         return ''.join(output)
