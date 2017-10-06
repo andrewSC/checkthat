@@ -1,6 +1,5 @@
 import datetime
 import os
-import sys
 import smtplib
 import argparse
 
@@ -37,7 +36,7 @@ def email_results(message):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='An automated AUR package builder and analyzer')
+    parser = argparse.ArgumentParser(description='A automated Arch Linux AUR package builder and analyzer written in Python')
     parser.add_argument('path', help='Path to where packages are located')
     args = parser.parse_args()
 

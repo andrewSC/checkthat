@@ -1,6 +1,6 @@
 Checkthat
 =========
-A automated Arch Linux AUR package builder and analyzer written in Python.::
+A automated Arch Linux AUR package builder and analyzer written in Python.:: 
 
   ------------------------------ Build Results ------------------------------
   Successfully built [gtk4-git-3.91.2.r653.gfbf24d1bd0-1-x86_64.pkg.tar]
