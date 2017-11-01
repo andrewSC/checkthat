@@ -3,7 +3,7 @@ import os
 import time
 import sys
 
-from .models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis, PkgbuildFetchFailure
+from .models import BuildSuccess, BuildFailure, NamcapPkgAnalysis, NamcapPkgBuildAnalysis
 
 
 # TODO: Refactor subprocess run logic into generic method
@@ -14,7 +14,7 @@ class PackageBuilder:
 
         cmd = [
             'makepkg',
-            '-cCmf'
+            '-cCmfsr'
         ]
         orig_dir = os.getcwd()
         os.chdir(pkgbuild_path)
