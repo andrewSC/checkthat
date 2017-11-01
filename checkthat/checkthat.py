@@ -27,7 +27,7 @@ def email_results(frm, to, subject, message):
     subject += f" on {now.strftime('%Y-%m-%d %H:%M:%S')}"
     message = f"From: {frm}\r\nTo: {to}\r\nSubject: {subject} \r\n\r\n{message}"
 
-    server.sendmail(frm, [to], message)
+    server.sendmail(frm, [to], message.encode('utf-8'))
     server.quit()
 
 
